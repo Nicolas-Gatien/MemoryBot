@@ -1,0 +1,57 @@
+import openai
+import traceback
+import time
+
+class ChatBot:
+    def __init__(self, start_context, api_key, model="gpt-3.5-turbo", temperature=1):
+        self.model = model
+        self.temperature = temperature
+        self.chat_history = [
+            {
+                "role": "system",
+                "content": start_context
+            }
+        ]
+        openai.api_key = api_key
+
+    def add_system_message(self, message):
+        self.chat_history.append({
+            "role": "system",
+            "content": f"""[THOUGHT] {message}"""
+        })
+
+    def add_user_message(self, message):
+        self.chat_history.append({
+            "role": "user",
+            "content": f"""{message}"""
+        })
+
+    def get_response(self):
+        try:
+            response = openai.ChatCompletion.create(
+                model=self.model,
+                messages=self.chat_history,
+                temperature=self.temperature,
+            )
+
+            self.chat_history.append({
+                "role": "assistant",
+                "content": f"{response.choices[0].message['content']}"
+            })
+            
+            return response.choices[0].message['content']
+
+        except openai.error.RateLimitError as e:
+            print("Rate limit exceeded. Waiting for 60 seconds...")
+            time.sleep(60)  # wait for 60 seconds
+            return self.get_response()  # retry the request
+
+        except Exception as e:
+            error_message = traceback.format_exc()
+            with open("error.txt", "a") as error_file:
+                error_file.write(f"An error occurred: {str(e)}\n")
+                error_file.write(f"Traceback:\n{error_message}\n")
+            print(f"An error occurred and has been written to error.txt. Error: {str(e)}")
+    
+    def get_conversation(self):
+        return self.chat_history

@@ -3,7 +3,7 @@ import traceback
 from chatbot import ChatBot
 
 key = ""
-with open('api_key.txt', 'r') as file:
+with open('../api_key.txt', 'r') as file:
     key = file.read().replace('\n', '')
 
 bot_context = """
@@ -20,7 +20,7 @@ def main():
         while loop:
             prompt = input("User: ")
             response = BOT.get_response(prompt)
-            print(f"GPT-4: {response}")
+            print(f"GPT: {response}")
 
     except Exception as e:
         error_message = traceback.format_exc()
