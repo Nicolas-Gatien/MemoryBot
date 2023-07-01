@@ -35,9 +35,9 @@ class ChatBot:
     def add_system_message(self, message, embed=True):
         self.chat_history.append({
             "role": "system",
-            "content": f"[THOUGHT] {message}"
+            "content": f"[MEMORY] {message}"
         })
-        print(Fore.LIGHTBLACK_EX + f'[THOUGHT] {message}' + Style.RESET_ALL)
+        print(Fore.LIGHTBLACK_EX + f'[MEMORY] {message}' + Style.RESET_ALL)
 
     def add_user_message(self, message):
         self.chat_history.append({
@@ -53,7 +53,7 @@ class ChatBot:
     def get_response(self, prompt):
         try:
             # generate temporary embedding for latest user message
-            prompt_embedding = self.get_embedding(f"{datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')} - The user said: {prompt}")
+            prompt_embedding = self.get_embedding(f"{datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')} - {prompt}")
             relevant_messages = self.get_most_relevant_messages(prompt_embedding)
 
             for message in relevant_messages:
@@ -69,7 +69,7 @@ class ChatBot:
 
             for _ in range(len(relevant_messages)):
                 removed_message = self.chat_history.pop(-2)
-                print(Fore.RED + f'Removed [THOUGHT]: {removed_message["content"]}' + Style.RESET_ALL)
+                print(Fore.RED + f'Removed: {removed_message["content"]}' + Style.RESET_ALL)
 
             self.chat_history.append({
                 "role": "assistant",
