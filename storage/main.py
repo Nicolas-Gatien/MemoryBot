@@ -21,7 +21,6 @@ BOT = ChatBot(bot_context, key)
 def main():
     try:
         loop = True
-        BOT.load_memory()
         while loop:
             message = input("User: ")
             if (message == "done"):
